@@ -6,13 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
-const NAV_LINKS = [
-  { href: "#cities", label: "도시 랭킹" },
-  { href: "#map", label: "지도" },
-  { href: "#live-feed", label: "커뮤니티" },
-  { href: "#finder", label: "내 도시 찾기" },
-];
-
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
@@ -20,26 +13,12 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-[#1a1a1a] bg-[rgba(8,8,8,0.85)] backdrop-blur-md">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         {/* 로고 */}
-        <a
-          href="#"
+        <Link
+          href="/"
           className="font-mono text-xl font-bold neon-text tracking-wider hover:opacity-80 transition-opacity"
         >
           NOMAD<span className="text-[#00E5FF]">.</span>KR
-        </a>
-
-        {/* 데스크탑 메뉴 */}
-        <ul className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="font-mono text-sm text-gray-400 hover:text-[#00FF88] transition-colors"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        </Link>
 
         {/* CTA 버튼 */}
         <div className="hidden md:flex items-center gap-3">
@@ -72,19 +51,6 @@ export default function Navbar() {
               <div className="font-mono text-lg font-bold neon-text mb-8">
                 NOMAD<span className="text-[#00E5FF]">.</span>KR
               </div>
-              <ul className="flex flex-col gap-4 flex-1">
-                {NAV_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <a
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      className="font-mono text-sm text-gray-400 hover:text-[#00FF88] transition-colors block py-2 border-b border-[#1a1a1a]"
-                    >
-                      {">"} {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
               <div className="flex flex-col gap-2 mt-4">
                 <Link
                   href="/login"
