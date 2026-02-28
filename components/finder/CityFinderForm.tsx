@@ -53,7 +53,7 @@ export default function CityFinderForm() {
     // 조건 기반 점수 계산
     const scored = CITIES.map((city) => {
       let bonus = 0;
-      if (selectedEnvs.length === 0 || selectedEnvs.some((e) => city.environment.includes(e))) bonus += 2;
+      if (selectedEnvs.length === 0 || selectedEnvs.some((e) => (city.environment as string[]).includes(e))) bonus += 2;
       if (selectedPriorities.includes("internet")) bonus += city.metrics.internet * 0.3;
       if (selectedPriorities.includes("cost") && city.monthlyCost < 1200000) bonus += 2;
       if (selectedPriorities.includes("cafe")) bonus += city.metrics.cafe * 0.2;

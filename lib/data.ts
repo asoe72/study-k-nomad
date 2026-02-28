@@ -1,3 +1,13 @@
+export const BUDGETS = ["100만원 이하", "100~200만원", "200만원 초과"] as const;
+export const REGIONS = ["수도권", "경상도", "전라도", "강원도", "제주도", "충청도"] as const;
+export const ENVIRONMENTS = ["자연친화", "도심선호", "카페작업", "코워킹 필수"] as const;
+export const SEASONS = ["봄", "여름", "가을", "겨울"] as const;
+
+export type Budget = typeof BUDGETS[number];
+export type Region = typeof REGIONS[number];
+export type Environment = typeof ENVIRONMENTS[number];
+export type Season = typeof SEASONS[number];
+
 export interface CityMetrics {
   internet: number;   // 0-10
   cafe: number;       // 0-10
@@ -11,13 +21,17 @@ export interface City {
   rank: number;
   name: string;
   nameEn: string;
-  region: string;
+  region: Region;
   score: number;
   monthlyCost: number;      // 월 생활비 (원)
   monthlyRent: number;      // 원룸 월세 (원)
   metrics: CityMetrics;
   tags: string[];
-  environment: string[];
+  environment: Environment[];
+  budget: Budget;
+  season: Season[];
+  likes: number;
+  dislikes: number;
   internetSpeed: number;    // Mbps
   weather: string;
   aqi: number;
@@ -84,13 +98,17 @@ export const CITIES: City[] = [
     rank: 1,
     name: "제주시",
     nameEn: "JEJU",
-    region: "제주특별자치도",
+    region: "제주도",
     score: 8.5,
     monthlyCost: 1580000,
     monthlyRent: 550000,
     metrics: { internet: 8.2, cafe: 9.0, transport: 7.5, nature: 9.8, nomadFriendly: 9.2 },
     tags: ["바다", "자연", "감성카페"],
-    environment: ["바다", "산"],
+    environment: ["자연친화", "카페작업"],
+    budget: "100~200만원",
+    season: ["봄", "가을"],
+    likes: 128,
+    dislikes: 12,
     internetSpeed: 82,
     weather: "맑음 18°C",
     aqi: 32,
@@ -103,13 +121,17 @@ export const CITIES: City[] = [
     rank: 2,
     name: "부산",
     nameEn: "BUSAN",
-    region: "부산광역시",
+    region: "경상도",
     score: 8.1,
     monthlyCost: 1720000,
     monthlyRent: 600000,
     metrics: { internet: 8.8, cafe: 8.5, transport: 8.9, nature: 8.0, nomadFriendly: 8.3 },
     tags: ["바다", "코워킹", "교통"],
-    environment: ["바다", "도시"],
+    environment: ["자연친화", "카페작업"],
+    budget: "100~200만원",
+    season: ["여름", "가을"],
+    likes: 104,
+    dislikes: 18,
     internetSpeed: 95,
     weather: "흐림 15°C",
     aqi: 45,
@@ -122,13 +144,17 @@ export const CITIES: City[] = [
     rank: 3,
     name: "서울 홍대",
     nameEn: "HONGDAE",
-    region: "서울 마포구",
+    region: "수도권",
     score: 8.3,
     monthlyCost: 2800000,
     monthlyRent: 900000,
     metrics: { internet: 9.5, cafe: 9.8, transport: 9.7, nature: 4.2, nomadFriendly: 9.0 },
     tags: ["수도권", "카페", "교통"],
-    environment: ["도시"],
+    environment: ["도심선호", "코워킹 필수"],
+    budget: "200만원 초과",
+    season: ["봄", "여름", "가을", "겨울"],
+    likes: 96,
+    dislikes: 24,
     internetSpeed: 150,
     weather: "맑음 12°C",
     aqi: 68,
@@ -141,13 +167,17 @@ export const CITIES: City[] = [
     rank: 4,
     name: "대전",
     nameEn: "DAEJEON",
-    region: "대전광역시",
+    region: "충청도",
     score: 7.9,
     monthlyCost: 1350000,
     monthlyRent: 480000,
     metrics: { internet: 9.0, cafe: 7.8, transport: 8.5, nature: 6.5, nomadFriendly: 8.0 },
     tags: ["테크허브", "저비용", "교통"],
-    environment: ["도시"],
+    environment: ["코워킹 필수", "카페작업"],
+    budget: "100만원 이하",
+    season: ["봄", "가을"],
+    likes: 72,
+    dislikes: 15,
     internetSpeed: 120,
     weather: "구름 10°C",
     aqi: 52,
@@ -160,13 +190,17 @@ export const CITIES: City[] = [
     rank: 5,
     name: "강릉",
     nameEn: "GANGNEUNG",
-    region: "강원특별자치도",
+    region: "강원도",
     score: 7.8,
     monthlyCost: 1180000,
     monthlyRent: 420000,
     metrics: { internet: 7.5, cafe: 9.5, transport: 6.8, nature: 9.2, nomadFriendly: 8.5 },
     tags: ["바다", "카페", "자연"],
-    environment: ["바다", "산"],
+    environment: ["자연친화"],
+    budget: "100만원 이하",
+    season: ["여름", "겨울"],
+    likes: 88,
+    dislikes: 10,
     internetSpeed: 75,
     weather: "맑음 14°C",
     aqi: 25,
@@ -179,13 +213,17 @@ export const CITIES: City[] = [
     rank: 6,
     name: "전주",
     nameEn: "JEONJU",
-    region: "전북특별자치도",
+    region: "전라도",
     score: 7.5,
     monthlyCost: 980000,
     monthlyRent: 380000,
     metrics: { internet: 7.8, cafe: 8.2, transport: 7.2, nature: 7.8, nomadFriendly: 7.5 },
     tags: ["문화", "저비용", "한옥"],
-    environment: ["문화", "도시"],
+    environment: ["자연친화", "카페작업"],
+    budget: "100만원 이하",
+    season: ["봄", "가을"],
+    likes: 64,
+    dislikes: 8,
     internetSpeed: 88,
     weather: "흐림 13°C",
     aqi: 38,
@@ -198,13 +236,17 @@ export const CITIES: City[] = [
     rank: 7,
     name: "춘천",
     nameEn: "CHUNCHEON",
-    region: "강원특별자치도",
+    region: "강원도",
     score: 7.2,
     monthlyCost: 1050000,
     monthlyRent: 400000,
     metrics: { internet: 7.2, cafe: 7.5, transport: 7.0, nature: 9.0, nomadFriendly: 7.0 },
     tags: ["산", "자연", "저비용"],
-    environment: ["산"],
+    environment: ["자연친화"],
+    budget: "100만원 이하",
+    season: ["봄", "여름"],
+    likes: 56,
+    dislikes: 9,
     internetSpeed: 72,
     weather: "맑음 9°C",
     aqi: 20,
@@ -324,12 +366,3 @@ export function formatKRWShort(amount: number): string {
   return `₩${man}만`;
 }
 
-export function getFilteredCities(filter: string): City[] {
-  if (filter === "all") return CITIES;
-  if (filter === "수도권") return CITIES.filter((c) => c.environment.includes("도시") && c.id === "hongdae");
-  if (filter === "제주") return CITIES.filter((c) => c.id === "jeju");
-  if (filter === "바다") return CITIES.filter((c) => c.environment.includes("바다"));
-  if (filter === "산·자연") return CITIES.filter((c) => c.environment.includes("산"));
-  if (filter === "저비용") return CITIES.filter((c) => c.monthlyCost < 1200000);
-  return CITIES;
-}
