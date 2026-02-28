@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -13,6 +15,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -36,10 +39,27 @@ export default function RegisterPage() {
     }
 
     setIsLoading(true);
-    // 실제 회원가입 로직 자리
-    await new Promise((r) => setTimeout(r, 1500));
+    const supabase = createClient();
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+      options: {
+        data: { username: form.username },
+      },
+    });
     setIsLoading(false);
+
+    if (signUpError) {
+      if (signUpError.message.includes("already registered")) {
+        setError("이미 사용 중인 이메일입니다.");
+      } else {
+        setError("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
+      return;
+    }
+
     setSuccess(true);
+    setTimeout(() => router.push("/"), 1500);
   };
 
   return (

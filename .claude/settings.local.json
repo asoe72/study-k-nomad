@@ -7,7 +7,11 @@
       "Bash(npm run:*)",
       "Bash(pkill:*)",
       "Bash(git worktree:*)",
-      "Bash(sleep 8:*)"
+      "Bash(sleep 8:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
