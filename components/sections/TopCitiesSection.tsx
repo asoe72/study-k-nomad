@@ -8,13 +8,13 @@ export default function TopCitiesSection() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <div className="font-mono text-xs text-[#00FF88] mb-2 tracking-widest">
-              // 04 TOP_CITIES
+              {'// 04 CITIES'}
             </div>
             <h2 className="font-mono text-2xl md:text-3xl font-bold text-white">
-              도시 랭킹
+              도시 리스트
             </h2>
             <p className="text-gray-500 text-sm mt-1">
-              7개 도시 · 5개 지표 · 실시간 업데이트
+              7개 도시 · 좋아요 순 정렬
             </p>
           </div>
           <a

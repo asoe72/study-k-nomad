@@ -13,12 +13,38 @@ const INITIAL_FILTERS: FilterValues = {
   season: "전체",
 };
 
+type VoteState = { liked: boolean; disliked: boolean; likes: number; dislikes: number };
+type VoteStateMap = Record<string, VoteState>;
+
+const INITIAL_VOTE_STATES: VoteStateMap = Object.fromEntries(
+  CITIES.map((c) => [c.id, { liked: false, disliked: false, likes: c.likes, dislikes: c.dislikes }])
+);
+
 export default function CitiesClient() {
   const [reviewCity, setReviewCity] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterValues>(INITIAL_FILTERS);
+  const [voteStates, setVoteStates] = useState<VoteStateMap>(INITIAL_VOTE_STATES);
 
   const handleFilterChange = (key: keyof FilterValues, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleLike = (cityId: string) => {
+    setVoteStates((prev) => {
+      const cur = prev[cityId];
+      return cur.liked
+        ? { ...prev, [cityId]: { ...cur, liked: false, likes: cur.likes - 1 } }
+        : { ...prev, [cityId]: { ...cur, liked: true, disliked: false, likes: cur.likes + 1, dislikes: cur.disliked ? cur.dislikes - 1 : cur.dislikes } };
+    });
+  };
+
+  const handleDislike = (cityId: string) => {
+    setVoteStates((prev) => {
+      const cur = prev[cityId];
+      return cur.disliked
+        ? { ...prev, [cityId]: { ...cur, disliked: false, dislikes: cur.dislikes - 1 } }
+        : { ...prev, [cityId]: { ...cur, disliked: true, liked: false, dislikes: cur.dislikes + 1, likes: cur.liked ? cur.likes - 1 : cur.likes } };
+    });
   };
 
   const filtered = CITIES.filter((city) => {
@@ -29,17 +55,29 @@ export default function CitiesClient() {
     return true;
   });
 
+  const sorted = [...filtered].sort((a, b) => {
+    const likeDiff = voteStates[b.id].likes - voteStates[a.id].likes;
+    return likeDiff !== 0 ? likeDiff : a.id.localeCompare(b.id);
+  });
+
   return (
     <div>
       <FilterBar values={filters} onChange={handleFilterChange} />
 
       {/* 카드 그리드 (가로 스크롤) */}
-      {filtered.length > 0 ? (
+      {sorted.length > 0 ? (
         <div className="flex gap-4 overflow-x-auto pb-4" style={{ scrollbarWidth: "thin" }}>
-          {filtered.map((city) => (
+          {sorted.map((city, index) => (
             <CityCard
               key={city.id}
               city={city}
+              rank={index + 1}
+              liked={voteStates[city.id].liked}
+              disliked={voteStates[city.id].disliked}
+              likes={voteStates[city.id].likes}
+              dislikes={voteStates[city.id].dislikes}
+              onLike={handleLike}
+              onDislike={handleDislike}
               onReview={(id) => setReviewCity(id)}
             />
           ))}
