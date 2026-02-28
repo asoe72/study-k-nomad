@@ -1,0 +1,194 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Noto+Sans+KR:wght@300;400;500&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: #FAFAF7;
+  --color-bg-surface: #F5F0E8;
+  --color-accent: #2D6A4F;
+  --color-secondary: #87A878;
+  --color-muted: #E9D8A6;
+  --color-foreground: #1B4332;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #2D3A2E;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #2D3A2E;
+  --color-primary: #2D6A4F;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary-color: #87A878;
+  --color-secondary-foreground: #1B4332;
+  --color-muted-color: #E9D8A6;
+  --color-muted-foreground: #6B7A6B;
+  --color-border: #D4C5A9;
+  --color-input: #F0EBE1;
+  --color-ring: #2D6A4F;
+  --radius: 12px;
+  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Noto Sans KR", sans-serif;
+  --animate-fade-up: fade-up 0.7s ease-out;
+  --animate-sway: sway 4s ease-in-out infinite;
+  --animate-ticker-scroll: ticker-scroll 40s linear infinite;
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes wave {
+  0% { d: path("M0,40 C150,80 350,0 500,40 L500,100 L0,100 Z"); }
+  50% { d: path("M0,60 C150,20 350,80 500,60 L500,100 L0,100 Z"); }
+  100% { d: path("M0,40 C150,80 350,0 500,40 L500,100 L0,100 Z"); }
+}
+
+/* Base */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #FAFAF7;
+  color: #2D3A2E;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F5F0E8; }
+::-webkit-scrollbar-thumb { background: #87A878; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2D6A4F; }
+
+/* 텍스트 선택 */
+::selection { background-color: rgba(45, 106, 79, 0.2); color: #1B4332; }
+
+/* 네이처 텍스트 강조 */
+.neon-text { color: #2D6A4F; font-weight: 500; }
+.neon-text-cyan { color: #87A878; }
+
+/* 도시 카드 */
+.city-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  border: 1px solid #D4C5A9;
+  background: #FFFFFF;
+  border-radius: 12px;
+}
+
+.city-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(45, 106, 79, 0.15);
+  border-color: #87A878;
+}
+
+/* 티커 */
+.ticker-track {
+  display: flex;
+  animation: ticker-scroll 40s linear infinite;
+  white-space: nowrap;
+}
+.ticker-track:hover { animation-play-state: paused; }
+
+/* 메트릭 바 */
+.metric-bar-filled { color: #2D6A4F; }
+.metric-bar-half { color: #87A878; }
+.metric-bar-empty { color: #D4C5A9; }
+
+/* 버튼 */
+.btn-neon {
+  border: 1.5px solid #2D6A4F;
+  color: #2D6A4F;
+  background: transparent;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.btn-neon:hover {
+  background: rgba(45, 106, 79, 0.08);
+}
+
+.btn-neon-solid {
+  background: #2D6A4F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.btn-neon-solid:hover {
+  background: #1B4332;
+  box-shadow: 0 4px 16px rgba(45, 106, 79, 0.3);
+}
+
+/* 네이처 보더 */
+.neon-border { border: 1px solid #D4C5A9; border-radius: 12px; }
+.neon-border:hover { border-color: #87A878; }
+
+/* 섹션 페이드 */
+.section-fade-up { animation: fade-up 0.7s ease-out both; }
+
+/* ASCII/터미널 → 숨김 */
+.ascii-art { display: none; }
+.ascii-rain-canvas { display: none; }
+.scanline-overlay { display: none; }
+.custom-cursor { display: none; }
+.custom-cursor-dot { display: none; }
+
+/* 터미널 → 네이처 카드로 재스타일 */
+.terminal-window {
+  background: #FFFFFF;
+  border: 1px solid #D4C5A9;
+  border-radius: 16px;
+  overflow: hidden;
+  font-family: "Noto Sans KR", sans-serif;
+  box-shadow: 0 4px 20px rgba(45, 106, 79, 0.08);
+}
+
+.terminal-titlebar {
+  background: #F5F0E8;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #D4C5A9;
+}
+
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot-red { background: #E9967A; }
+.terminal-dot-yellow { background: #E9C46A; }
+.terminal-dot-green { background: #87A878; }
+
+.terminal-body { padding: 20px; font-size: 0.875rem; line-height: 1.8; color: #4A6741; }
+.terminal-cursor { display: inline-block; width: 2px; height: 1em; background: #2D6A4F; vertical-align: middle; margin-left: 2px; }
+.terminal-prompt { color: #2D6A4F; font-weight: 500; }
+.terminal-output { color: #87A878; }
+.terminal-highlight { color: #1B4332; font-weight: 500; }
+.terminal-cyan { color: #6B9E76; }
+
+/* 별점 */
+.star-filled { color: #2D6A4F; }
+.star-empty { color: #D4C5A9; }
+
+/* 필터 버튼 */
+.filter-btn-active {
+  border-color: #2D6A4F !important;
+  color: #2D6A4F !important;
+  background: rgba(45, 106, 79, 0.08) !important;
+}
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+}

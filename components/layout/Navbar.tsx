@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
@@ -42,6 +43,12 @@ export default function Navbar() {
 
         {/* CTA 버튼 */}
         <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/login"
+            className="font-mono text-xs border border-[#00E5FF] text-[#00E5FF] bg-transparent hover:bg-[rgba(0,229,255,0.1)] hover:shadow-[0_0_8px_rgba(0,229,255,0.3)] transition-all px-3 py-1.5"
+          >
+            로그인
+          </Link>
           <Button
             size="sm"
             className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border"
@@ -78,11 +85,20 @@ export default function Navbar() {
                   </li>
                 ))}
               </ul>
-              <Button
-                className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border mt-4"
-              >
-                JOIN →
-              </Button>
+              <div className="flex flex-col gap-2 mt-4">
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="font-mono text-xs border border-[#00E5FF] text-[#00E5FF] bg-transparent hover:bg-[rgba(0,229,255,0.1)] transition-all px-3 py-2 text-center"
+                >
+                  로그인
+                </Link>
+                <Button
+                  className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border"
+                >
+                  JOIN →
+                </Button>
+              </div>
             </div>
           </SheetContent>
         </Sheet>

@@ -1,0 +1,8 @@
+{
+  "allowedTools": [
+    "Bash(git worktree add *)",
+    "Bash(git worktree remove *)",
+    "Bash(git worktree list*)",
+    "Bash(pnpm *)"
+  ]
+}

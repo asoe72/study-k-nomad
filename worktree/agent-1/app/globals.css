@@ -1,0 +1,200 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: #ffffff;
+  --color-bg-surface: #f9fafb;
+  --color-accent: #3B82F6;
+  --color-secondary: #6366F1;
+  --color-muted: #e5e7eb;
+  --color-foreground: #111827;
+  --color-card: #ffffff;
+  --color-card-foreground: #111827;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #111827;
+  --color-primary: #3B82F6;
+  --color-primary-foreground: #ffffff;
+  --color-secondary-color: #6366F1;
+  --color-secondary-foreground: #ffffff;
+  --color-muted-color: #e5e7eb;
+  --color-muted-foreground: #6b7280;
+  --color-border: #e5e7eb;
+  --color-input: #f3f4f6;
+  --color-ring: #3B82F6;
+  --radius: 4px;
+  --font-sans: "Inter", "Noto Sans KR", sans-serif;
+  --animate-fade-up: fade-up 0.6s ease-out;
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-ticker-scroll: ticker-scroll 40s linear infinite;
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Base */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #ffffff;
+  color: #111827;
+  font-family: "Inter", "Noto Sans KR", sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #f9fafb; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
+
+/* 텍스트 선택 */
+::selection {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
+}
+
+/* 도시 카드 */
+.city-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.city-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: #3B82F6;
+}
+
+/* 티커 */
+.ticker-track {
+  display: flex;
+  animation: ticker-scroll 40s linear infinite;
+  white-space: nowrap;
+}
+
+.ticker-track:hover { animation-play-state: paused; }
+
+/* 메트릭 바 */
+.metric-bar-filled { color: #3B82F6; }
+.metric-bar-half { color: #93c5fd; }
+.metric-bar-empty { color: #e5e7eb; }
+
+/* 네온 텍스트 → 미니멀에선 그냥 블루 */
+.neon-text { color: #3B82F6; }
+.neon-text-cyan { color: #6366F1; }
+
+/* 버튼 */
+.btn-neon {
+  background: transparent;
+  color: #3B82F6;
+  border: 1px solid #3B82F6;
+  transition: all 0.2s ease;
+}
+
+.btn-neon:hover {
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.btn-neon-solid {
+  background: #3B82F6;
+  color: #ffffff;
+  border: 1px solid #3B82F6;
+  transition: all 0.2s ease;
+}
+
+.btn-neon-solid:hover {
+  background: #2563eb;
+}
+
+/* 네온 테두리 → 미니멀 보더 */
+.neon-border { border: 1px solid #e5e7eb; }
+.neon-border:hover { border-color: #3B82F6; }
+
+/* 섹션 페이드 */
+.section-fade-up { animation: fade-up 0.6s ease-out both; }
+
+/* ASCII (숨김 처리) */
+.ascii-art { display: none; }
+.ascii-rain-canvas { display: none; }
+.scanline-overlay { display: none; }
+.custom-cursor { display: none; }
+.custom-cursor-dot { display: none; }
+
+/* 별점 */
+.star-filled { color: #3B82F6; }
+.star-empty { color: #e5e7eb; }
+
+/* 필터 버튼 */
+.filter-btn-active {
+  border-color: #3B82F6 !important;
+  color: #3B82F6 !important;
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+
+/* 터미널 → 미니멀 카드로 재활용 */
+.terminal-window {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+.terminal-titlebar {
+  background: #f3f4f6;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot-red { background: #f87171; }
+.terminal-dot-yellow { background: #fbbf24; }
+.terminal-dot-green { background: #34d399; }
+
+.terminal-body {
+  padding: 20px;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #3B82F6;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
+.terminal-prompt { color: #3B82F6; font-weight: 500; }
+.terminal-output { color: #6b7280; }
+.terminal-highlight { color: #111827; font-weight: 500; }
+.terminal-cyan { color: #6366F1; }
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+}
