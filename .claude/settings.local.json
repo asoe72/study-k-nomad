@@ -16,5 +16,9 @@
       "Bash(npx eslint:*)",
       "Bash(npm rebuild:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "context7"
+  ],
+  "enableAllProjectMcpServers": true
 }
