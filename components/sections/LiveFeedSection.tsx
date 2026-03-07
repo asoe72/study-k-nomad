@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
 
 function StarDisplay({ rating }: { rating: number }) {
   return (
@@ -16,7 +17,34 @@ function StarDisplay({ rating }: { rating: number }) {
   );
 }
 
-export default function LiveFeedSection() {
+interface ReviewDisplay {
+  handle: string;
+  rating: number;
+  text: string;
+  cityName: string;
+  cityId: string;
+}
+
+export default async function LiveFeedSection() {
+  const supabase = await createClient();
+
+  // 최신 리뷰 3건 조회 (profiles JOIN)
+  const { data: dbReviews } = await supabase
+    .from("reviews")
+    .select("id, content, rating, city_id, created_at, profiles(username), cities(name)")
+    .order("created_at", { ascending: false })
+    .limit(3);
+
+  const reviews: ReviewDisplay[] = dbReviews && dbReviews.length > 0
+    ? dbReviews.map((r) => ({
+        handle: `@${(r.profiles as unknown as { username: string } | null)?.username ?? "nomad"}`,
+        rating: r.rating,
+        text: r.content || "(내용 없음)",
+        cityName: (r.cities as unknown as { name: string } | null)?.name ?? r.city_id,
+        cityId: r.city_id,
+      }))
+    : REVIEWS;
+
   return (
     <section id="live-feed" className="py-16 border-b border-[#1a1a1a]">
       <div className="mx-auto max-w-7xl px-4">
@@ -106,7 +134,7 @@ export default function LiveFeedSection() {
               <span className="font-mono text-xs text-gray-600 ml-auto">460건/월</span>
             </div>
             <div className="divide-y divide-[#1a1a1a]">
-              {REVIEWS.map((review, i) => (
+              {reviews.map((review, i) => (
                 <div key={i} className="px-4 py-4 hover:bg-[#141414] transition-colors">
                   <StarDisplay rating={review.rating} />
                   <p className="font-mono text-xs text-gray-300 mt-2 leading-relaxed">

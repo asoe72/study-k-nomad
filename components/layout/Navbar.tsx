@@ -5,8 +5,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { signOut } from "@/app/actions/auth";
 
-export default function Navbar() {
+interface NavbarProps {
+  user?: { email: string; username?: string } | null;
+}
+
+export default function Navbar({ user }: NavbarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -20,20 +25,39 @@ export default function Navbar() {
           NOMAD<span className="text-[#00E5FF]">.</span>KR
         </Link>
 
-        {/* CTA 버튼 */}
+        {/* CTA 버튼 (데스크톱) */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/login"
-            className="font-mono text-xs border border-[#00E5FF] text-[#00E5FF] bg-transparent hover:bg-[rgba(0,229,255,0.1)] hover:shadow-[0_0_8px_rgba(0,229,255,0.3)] transition-all px-3 py-1.5"
-          >
-            로그인
-          </Link>
-          <Button
-            size="sm"
-            className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border"
-          >
-            JOIN →
-          </Button>
+          {user ? (
+            <>
+              <span className="font-mono text-xs text-[#00FF88]">
+                {user.username ?? user.email}
+              </span>
+              <form action={signOut}>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="font-mono text-xs border-[#555] text-gray-400 bg-transparent hover:bg-[rgba(255,255,255,0.05)] border"
+                >
+                  로그아웃
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="font-mono text-xs border border-[#00E5FF] text-[#00E5FF] bg-transparent hover:bg-[rgba(0,229,255,0.1)] hover:shadow-[0_0_8px_rgba(0,229,255,0.3)] transition-all px-3 py-1.5"
+              >
+                로그인
+              </Link>
+              <Button
+                size="sm"
+                className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border"
+              >
+                JOIN →
+              </Button>
+            </>
+          )}
         </div>
 
         {/* 모바일 햄버거 */}
@@ -52,18 +76,36 @@ export default function Navbar() {
                 NOMAD<span className="text-[#00E5FF]">.</span>KR
               </div>
               <div className="flex flex-col gap-2 mt-4">
-                <Link
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="font-mono text-xs border border-[#00E5FF] text-[#00E5FF] bg-transparent hover:bg-[rgba(0,229,255,0.1)] transition-all px-3 py-2 text-center"
-                >
-                  로그인
-                </Link>
-                <Button
-                  className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border"
-                >
-                  JOIN →
-                </Button>
+                {user ? (
+                  <>
+                    <div className="font-mono text-xs text-[#00FF88] py-2">
+                      {user.username ?? user.email}
+                    </div>
+                    <form action={signOut}>
+                      <Button
+                        type="submit"
+                        className="w-full font-mono text-xs border-[#555] text-gray-400 bg-transparent hover:bg-[rgba(255,255,255,0.05)] border"
+                      >
+                        로그아웃
+                      </Button>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setOpen(false)}
+                      className="font-mono text-xs border border-[#00E5FF] text-[#00E5FF] bg-transparent hover:bg-[rgba(0,229,255,0.1)] transition-all px-3 py-2 text-center"
+                    >
+                      로그인
+                    </Link>
+                    <Button
+                      className="font-mono text-xs border-[#00FF88] text-[#00FF88] bg-transparent hover:bg-[rgba(0,255,136,0.1)] border"
+                    >
+                      JOIN →
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>

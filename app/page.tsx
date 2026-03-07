@@ -7,11 +7,25 @@ import HowItWorksSection from "@/components/sections/HowItWorksSection";
 import LiveFeedSection from "@/components/sections/LiveFeedSection";
 import MapTeaserSection from "@/components/sections/MapTeaserSection";
 import CityFinderSection from "@/components/sections/CityFinderSection";
+import { createClient } from "@/utils/supabase/server";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let navUser: { email: string; username?: string } | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .maybeSingle();
+    navUser = { email: user.email ?? "", username: profile?.username };
+  }
+
   return (
     <div className="min-h-screen bg-[#080808]">
-      <Navbar />
+      <Navbar user={navUser} />
       <main>
         {/* 01 Hero */}
         <HeroSection />

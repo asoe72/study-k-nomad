@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -8,10 +9,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CITIES } from "@/lib/data";
+import { submitReview } from "@/app/actions/review";
 
 interface ReviewModalProps {
   cityId: string | null;
+  cityName: string | null;
+  cityNameEn: string | null;
+  userId: string | null;
   onClose: () => void;
 }
 
@@ -49,8 +53,9 @@ function StarRating({
   );
 }
 
-export default function ReviewModal({ cityId, onClose }: ReviewModalProps) {
-  const city = CITIES.find((c) => c.id === cityId);
+export default function ReviewModal({ cityId, cityName, cityNameEn, userId, onClose }: ReviewModalProps) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [ratings, setRatings] = useState<Record<string, number>>({
     internet: 0,
     cafe: 0,
@@ -60,16 +65,25 @@ export default function ReviewModal({ cityId, onClose }: ReviewModalProps) {
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = () => {
-    setSubmitted(true);
-    setTimeout(() => {
-      onClose();
-      setSubmitted(false);
-      setRatings({ internet: 0, cafe: 0, cost: 0 });
-      setText("");
-    }, 1500);
+    if (!userId) {
+      router.push("/login");
+      return;
+    }
+    if (!cityId) return;
+
+    startTransition(async () => {
+      await submitReview(cityId, ratings, text);
+      setSubmitted(true);
+      setTimeout(() => {
+        onClose();
+        setSubmitted(false);
+        setRatings({ internet: 0, cafe: 0, cost: 0 });
+        setText("");
+      }, 1500);
+    });
   };
 
-  if (!city) return null;
+  if (!cityId || !cityName) return null;
 
   return (
     <Dialog open={!!cityId} onOpenChange={(open) => !open && onClose()}>
@@ -78,10 +92,12 @@ export default function ReviewModal({ cityId, onClose }: ReviewModalProps) {
         <DialogHeader className="p-5 pb-0">
           <div className="text-xs text-[#00FF88] mb-1">// WRITE_REVIEW</div>
           <DialogTitle className="text-white font-mono text-lg font-bold">
-            {city.name}
-            <span className="text-gray-500 text-sm ml-2 font-normal">
-              {city.nameEn}
-            </span>
+            {cityName}
+            {cityNameEn && (
+              <span className="text-gray-500 text-sm ml-2 font-normal">
+                {cityNameEn}
+              </span>
+            )}
           </DialogTitle>
         </DialogHeader>
 
@@ -91,6 +107,16 @@ export default function ReviewModal({ cityId, onClose }: ReviewModalProps) {
               <div className="text-4xl mb-3">✓</div>
               <div className="text-[#00FF88] font-bold">REVIEW SUBMITTED</div>
               <div className="text-gray-500 text-xs mt-1">감사합니다!</div>
+            </div>
+          ) : !userId ? (
+            <div className="text-center py-8">
+              <div className="text-gray-400 text-sm mb-4">리뷰를 작성하려면 로그인이 필요합니다.</div>
+              <Button
+                onClick={() => router.push("/login")}
+                className="font-mono text-sm bg-[#00FF88] text-[#080808] hover:bg-[#00cc6e] font-bold"
+              >
+                ▶ 로그인하기
+              </Button>
             </div>
           ) : (
             <>

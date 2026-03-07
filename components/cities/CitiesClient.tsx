@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { CITIES } from "@/lib/data";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import type { City } from "@/lib/data";
 import CityCard from "./CityCard";
 import ReviewModal from "@/components/modals/ReviewModal";
 import FilterBar, { FilterValues } from "./FilterBar";
+import { toggleVote } from "@/app/actions/vote";
 
 const INITIAL_FILTERS: FilterValues = {
   budget: "전체",
@@ -16,42 +18,77 @@ const INITIAL_FILTERS: FilterValues = {
 type VoteState = { liked: boolean; disliked: boolean; likes: number; dislikes: number };
 type VoteStateMap = Record<string, VoteState>;
 
-const INITIAL_VOTE_STATES: VoteStateMap = Object.fromEntries(
-  CITIES.map((c) => [c.id, { liked: false, disliked: false, likes: c.likes, dislikes: c.dislikes }])
-);
+interface CitiesClientProps {
+  cities: City[];
+  userVotes: Record<string, "like" | "dislike">;
+  userId: string | null;
+}
 
-export default function CitiesClient() {
+function buildInitialVoteStates(
+  cities: City[],
+  userVotes: Record<string, "like" | "dislike">
+): VoteStateMap {
+  return Object.fromEntries(
+    cities.map((c) => [
+      c.id,
+      {
+        liked: userVotes[c.id] === "like",
+        disliked: userVotes[c.id] === "dislike",
+        likes: c.likes,
+        dislikes: c.dislikes,
+      },
+    ])
+  );
+}
+
+export default function CitiesClient({ cities, userVotes, userId }: CitiesClientProps) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [reviewCity, setReviewCity] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterValues>(INITIAL_FILTERS);
-  const [voteStates, setVoteStates] = useState<VoteStateMap>(INITIAL_VOTE_STATES);
+  const [voteStates, setVoteStates] = useState<VoteStateMap>(() =>
+    buildInitialVoteStates(cities, userVotes)
+  );
 
   const handleFilterChange = (key: keyof FilterValues, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleLike = (cityId: string) => {
+    if (!userId) {
+      router.push("/login");
+      return;
+    }
+    // Optimistic update
     setVoteStates((prev) => {
       const cur = prev[cityId];
       return cur.liked
         ? { ...prev, [cityId]: { ...cur, liked: false, likes: cur.likes - 1 } }
         : { ...prev, [cityId]: { ...cur, liked: true, disliked: false, likes: cur.likes + 1, dislikes: cur.disliked ? cur.dislikes - 1 : cur.dislikes } };
     });
+    startTransition(() => { toggleVote(cityId, "like"); });
   };
 
   const handleDislike = (cityId: string) => {
+    if (!userId) {
+      router.push("/login");
+      return;
+    }
+    // Optimistic update
     setVoteStates((prev) => {
       const cur = prev[cityId];
       return cur.disliked
         ? { ...prev, [cityId]: { ...cur, disliked: false, dislikes: cur.dislikes - 1 } }
         : { ...prev, [cityId]: { ...cur, disliked: true, liked: false, dislikes: cur.dislikes + 1, likes: cur.liked ? cur.likes - 1 : cur.likes } };
     });
+    startTransition(() => { toggleVote(cityId, "dislike"); });
   };
 
-  const filtered = CITIES.filter((city) => {
+  const filtered = cities.filter((city) => {
     if (filters.budget !== "전체" && city.budget !== filters.budget) return false;
     if (filters.region !== "전체" && city.region !== filters.region) return false;
-    if (filters.environment !== "전체" && !city.environment.includes(filters.environment)) return false;
-    if (filters.season !== "전체" && !city.season.includes(filters.season)) return false;
+    if (filters.environment !== "전체" && !city.environment.includes(filters.environment as City["environment"][number])) return false;
+    if (filters.season !== "전체" && !city.season.includes(filters.season as City["season"][number])) return false;
     return true;
   });
 
@@ -59,6 +96,8 @@ export default function CitiesClient() {
     const likeDiff = voteStates[b.id].likes - voteStates[a.id].likes;
     return likeDiff !== 0 ? likeDiff : a.id.localeCompare(b.id);
   });
+
+  const reviewCityObj = cities.find((c) => c.id === reviewCity) ?? null;
 
   return (
     <div>
@@ -72,10 +111,10 @@ export default function CitiesClient() {
               key={city.id}
               city={city}
               rank={index + 1}
-              liked={voteStates[city.id].liked}
-              disliked={voteStates[city.id].disliked}
-              likes={voteStates[city.id].likes}
-              dislikes={voteStates[city.id].dislikes}
+              liked={voteStates[city.id]?.liked ?? false}
+              disliked={voteStates[city.id]?.disliked ?? false}
+              likes={voteStates[city.id]?.likes ?? city.likes}
+              dislikes={voteStates[city.id]?.dislikes ?? city.dislikes}
               onLike={handleLike}
               onDislike={handleDislike}
               onReview={(id) => setReviewCity(id)}
@@ -92,6 +131,9 @@ export default function CitiesClient() {
       {/* 리뷰 모달 */}
       <ReviewModal
         cityId={reviewCity}
+        cityName={reviewCityObj?.name ?? null}
+        cityNameEn={reviewCityObj?.nameEn ?? null}
+        userId={userId}
         onClose={() => setReviewCity(null)}
       />
     </div>
