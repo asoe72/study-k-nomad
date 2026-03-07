@@ -14,11 +14,13 @@
       "Bash(npx tsc:*)",
       "Bash(npx next:*)",
       "Bash(npx eslint:*)",
-      "Bash(npm rebuild:*)"
+      "Bash(npm rebuild:*)",
+      "Bash(node:*)",
+      "Bash(npm test:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "context7"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

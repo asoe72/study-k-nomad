@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CITIES, formatKRWShort } from "@/lib/data";
+import { findTopCities } from "@/lib/finder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -48,25 +49,23 @@ export default function CityFinderForm() {
 
   const handleFinder = () => {
     setIsRunning(true);
-    const maxBudget = (parseInt(income) || 300) * 10000 * (budgetRatio[0] / 100);
+    const parsedIncome = parseInt(income) || 300;
 
-    // 조건 기반 점수 계산
-    const scored = CITIES.map((city) => {
-      let bonus = 0;
-      if (selectedEnvs.length === 0 || selectedEnvs.some((e) => (city.environment as string[]).includes(e))) bonus += 2;
-      if (selectedPriorities.includes("internet")) bonus += city.metrics.internet * 0.3;
-      if (selectedPriorities.includes("cost") && city.monthlyCost < 1200000) bonus += 2;
-      if (selectedPriorities.includes("cafe")) bonus += city.metrics.cafe * 0.2;
-      if (selectedPriorities.includes("transport")) bonus += city.metrics.transport * 0.2;
-      return { city, totalScore: city.score + bonus };
+    const topCities = findTopCities(CITIES, {
+      income: parsedIncome,
+      budgetRatio: budgetRatio[0],
+      preferredEnv: selectedEnvs,
+      priority: selectedPriorities,
     });
 
-    const affordable = scored
-      .filter((s) => s.city.monthlyCost <= maxBudget || maxBudget <= 0)
-      .sort((a, b) => b.totalScore - a.totalScore)
-      .slice(0, 3)
-      .map((s) => ({ name: s.city.name, score: s.city.score, cost: s.city.monthlyCost }));
+    const affordable = topCities.map((r) => ({
+      name: r.city.name,
+      score: r.city.score,
+      cost: r.city.monthlyCost,
+    }));
 
+    // maxBudget <= 0 케이스: findTopCities 내부에서 filter를 통과시키므로 별도 처리 불필요
+    // affordable이 비었을 때는 원본 로직과 동일하게 CITIES 상위 3개 표시
     setTimeout(() => {
       setResults(affordable.length > 0 ? affordable : CITIES.slice(0, 3).map((c) => ({ name: c.name, score: c.score, cost: c.monthlyCost })));
       setIsRunning(false);
